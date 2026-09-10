@@ -24,6 +24,11 @@ jobs:
       - name: Instalar Android SDK build-tools (para apksigner)
         uses: android-actions/setup-android@v3
 
+      - name: Instalar build-tools con apksigner
+        run: |
+          yes | sdkmanager --install "build-tools;35.0.0"
+          echo "$ANDROID_HOME/build-tools/35.0.0" >> "$GITHUB_PATH"
+
       - name: Obtener el último release de kveld9
         id: patch_info
         run: |
