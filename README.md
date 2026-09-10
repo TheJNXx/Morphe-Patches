@@ -6,7 +6,7 @@ Patched Brave Browser
 
 This is for personal use with a custom signature, all thanks to GitHub Actions
 
-**Only 64-bits (armv64)**
+**Only 64-bits (arm64-v8a)**
 
 **Sha-256**
 
