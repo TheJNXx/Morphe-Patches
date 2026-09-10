@@ -1,5 +1,7 @@
 # Morphe-Patches
 
+[Spanish](es.md)
+
 Patched Brave Browser
 
 This is for personal use with a custom signature, all thanks to GitHub Actions
