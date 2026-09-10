@@ -4,6 +4,8 @@ Brave Browser parcheado
 
 Esto es de uso personal con una firma propia todo gracias a las Github Actions
 
+[📲 Agregar a Obtainium](https://apps.obtainium.imranr.dev/redirect.html?r=obtainium://app/%7B%22id%22%3A%20%22com.brave.browser%22%2C%20%22url%22%3A%20%22https%3A%2F%2Fgithub.com%2FTheJnxx%2FMorphe-Patches%22%2C%20%22author%22%3A%20%22TheJnxx%22%2C%20%22name%22%3A%20%22Brave%20%28parcheado%29%22%7D)
+
 # Creditos
 
 [Morphe-Cli](github.com/MorpheApp/morphe-desktop)
