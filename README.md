@@ -1,11 +1,13 @@
 # Morphe-Patches
 
-Brave Browser parcheado con Morphe
+Brave Browser parcheado
 
-Esto es de uso personal firmado con una firma propia todo gracias a las Github Actions
+Esto es de uso personal con una firma propia todo gracias a las Github Actions
 
 # Creditos
 
-Morphe-Cli
+[Morphe-Cli](github.com/MorpheApp/morphe-desktop)
 
 [kveld-morphe-patches](https://github.com/kveld9/kveld-morphe-patches)
+
+Claude (por desgracia)
