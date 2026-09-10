@@ -1,0 +1,134 @@
+name: Build Patched Brave
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  check-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repo
+        uses: actions/checkout@v4
+
+      - name: Instalar JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Instalar Android SDK build-tools (para apksigner)
+        uses: android-actions/setup-android@v3
+
+      - name: Obtener el último release de kveld9
+        id: patch_info
+        run: |
+          curl -sL --fail -o patches-list.json \
+            "https://raw.githubusercontent.com/kveld9/kveld-morphe-patches/main/patches-list.json"
+
+          PATCH_VERSION=$(jq -r '.version' patches-list.json)
+
+          BRAVE_VERSION=$(jq -r '
+            [.patches[].compatiblePackages[]?
+              | select(.packageName == "com.brave.browser")
+              | .targets[].version
+            ] | unique | .[0]
+          ' patches-list.json)
+
+          RESPONSE=$(curl -s https://api.github.com/repos/kveld9/kveld-morphe-patches/releases/latest)
+          PATCH_TAG=$(echo "$RESPONSE" | jq -r '.tag_name')
+          PATCH_URL=$(echo "$RESPONSE" | jq -r '.assets[] | select(.name | test("\\.mpp$")) | .browser_download_url' | head -1)
+
+          if [ -z "$PATCH_URL" ] || [ -z "$BRAVE_VERSION" ] || [ "$BRAVE_VERSION" == "null" ]; then
+            echo "::error::No se pudo extraer la URL del parche o la versión requerida de Brave."
+            exit 1
+          fi
+
+          echo "patch_tag=$PATCH_VERSION-$PATCH_TAG" >> "$GITHUB_OUTPUT"
+          echo "patch_url=$PATCH_URL" >> "$GITHUB_OUTPUT"
+          echo "brave_version=$BRAVE_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Comparar contra la última build hecha
+        id: check_state
+        run: |
+          if [ -f state.json ]; then
+            LAST_PATCH=$(jq -r '.patch_tag' state.json)
+            LAST_BRAVE=$(jq -r '.brave_version' state.json)
+          else
+            LAST_PATCH=""
+            LAST_BRAVE=""
+          fi
+
+          if [ "$LAST_PATCH" == "${{ steps.patch_info.outputs.patch_tag }}" ] && \
+             [ "$LAST_BRAVE" == "${{ steps.patch_info.outputs.brave_version }}" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Descargar Brave (BraveMonoarm64.apk de la versión exacta)
+        if: steps.check_state.outputs.skip == 'false'
+        run: |
+          VERSION="${{ steps.patch_info.outputs.brave_version }}"
+          curl -sL --fail -o brave-original.apk \
+            "https://github.com/brave/brave-browser/releases/download/v${VERSION}/BraveMonoarm64.apk"
+
+      - name: Descargar el parche .mpp
+        if: steps.check_state.outputs.skip == 'false'
+        run: curl -sL --fail -o patches.mpp "${{ steps.patch_info.outputs.patch_url }}"
+
+      - name: Descargar Morphe CLI oficial (morphe-desktop)
+        if: steps.check_state.outputs.skip == 'false'
+        run: |
+          CLI_URL=$(curl -s https://api.github.com/repos/MorpheApp/morphe-desktop/releases/latest \
+            | jq -r '.assets[] | select(.name | test("all\\.jar$")) | .browser_download_url')
+          curl -sL --fail -o morphe-cli.jar "$CLI_URL"
+
+      - name: Decodificar el keystore
+        if: steps.check_state.outputs.skip == 'false'
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.keystore
+
+      - name: Parchear
+        if: steps.check_state.outputs.skip == 'false'
+        run: |
+          java -jar morphe-cli.jar patch \
+            -p patches.mpp \
+            -o brave-patched-unsigned.apk \
+            brave-original.apk
+
+      - name: Firmar con tu propia clave
+        if: steps.check_state.outputs.skip == 'false'
+        run: |
+          apksigner sign \
+            --ks release.keystore \
+            --ks-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
+            --ks-key-alias "${{ secrets.KEY_ALIAS }}" \
+            --key-pass "pass:${{ secrets.KEY_PASSWORD }}" \
+            --out brave-patched.apk \
+            brave-patched-unsigned.apk
+
+      - name: Borrar el keystore del runner
+        if: always()
+        run: rm -f release.keystore
+
+      - name: Guardar el estado
+        if: steps.check_state.outputs.skip == 'false'
+        run: |
+          echo "{\"patch_tag\": \"${{ steps.patch_info.outputs.patch_tag }}\", \"brave_version\": \"${{ steps.patch_info.outputs.brave_version }}\"}" > state.json
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add state.json
+          git commit -m "Build: Brave ${{ steps.patch_info.outputs.brave_version }} / parche ${{ steps.patch_info.outputs.patch_tag }}"
+          git push
+
+      - name: Publicar release con el APK
+        if: steps.check_state.outputs.skip == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "brave-${{ steps.patch_info.outputs.brave_version }}-${{ steps.patch_info.outputs.patch_tag }}"
+          name: "Brave ${{ steps.patch_info.outputs.brave_version }} (parche ${{ steps.patch_info.outputs.patch_tag }})"
+          files: brave-patched.apk
