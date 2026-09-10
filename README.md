@@ -19,7 +19,7 @@ This is for personal use with a custom signature, all thanks to GitHub Actions
 
 # Credits
 
-[Morphe-Cli](github.com/MorpheApp/morphe-desktop)
+[Morphe-Cli](https://github.com/MorpheApp/morphe-desktop)
 
 [kveld-morphe-patches](https://github.com/kveld9/kveld-morphe-patches)
 
