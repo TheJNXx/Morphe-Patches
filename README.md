@@ -8,7 +8,9 @@ Esto es de uso personal con una firma propia todo gracias a las Github Actions
 
 Sha-256
 
-`3a5b8face32fa945439c146a6387a70d0cd46fadcc55f8a7f78311864cd46edc`
+```
+3a5b8face32fa945439c146a6387a70d0cd46fadcc55f8a7f78311864cd46edc
+```
 
 # Creditos
 
