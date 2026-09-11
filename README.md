@@ -1,6 +1,7 @@
 # Morphe-Patches
 
-Patched Brave Browser **Only 64-bits (arm64-v8a)**
+Patched Brave Browser 
+**Only 64-bits (arm64-v8a)**
 
 This is for personal use with a custom signature, all thanks to GitHub Actions
 
