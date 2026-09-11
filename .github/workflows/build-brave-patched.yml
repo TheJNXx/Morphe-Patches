@@ -124,5 +124,5 @@ jobs:
         with:
           tag_name: "brave-${{ steps.patch_info.outputs.brave_version }}-${{ steps.patch_info.outputs.patch_tag }}"
           name: "Brave ${{ steps.patch_info.outputs.brave_version }} (patch ${{ steps.patch_info.outputs.patch_tag }})"
-          body: "Automated build. Brave ${{ steps.patch_info.outputs.brave_version }}, patched with kveld9's Morphe patches (${{ steps.patch_info.outputs.patch_tag }})."
+          body: "Native telemetry stripped at the bytecode/libchrome.so level using kveld9's Morphe patches. Signed with a personal key, unaffiliated with kveld9 or Brave Software."
           files: brave-patched.apk
