@@ -123,7 +123,7 @@ jobs:
         if: steps.check_state.outputs.skip == 'false'
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: "brave-${{ steps.patch_info.outputs.brave_version }}-${{ steps.patch_info.outputs.patch_tag }}"
+          tag_name: "brave-${{ steps.patch_info.outputs.brave_version }}"
           name: "Brave ${{ steps.patch_info.outputs.brave_version }}"
-          body: "Patched with kveld9's Morphe patches ${{ steps.patch_info.outputs.patch_tag }} — https://github.com/kveld9/kveld-morphe-patches/releases/tag/${{ steps.patch_info.outputs.kveld_tag }}\n\nNative telemetry stripped at the bytecode/libchrome.so level. Signed with a personal key, unaffiliated with kveld9 or Brave Software."
+          body: "Patched with kveld9's Morphe patches ${{ steps.patch_info.outputs.patch_tag }} — https://github.com/kveld9/kveld-morphe-patches/releases/tag/${{ steps.patch_info.outputs.kveld_tag }}"
           files: brave-patched.apk
