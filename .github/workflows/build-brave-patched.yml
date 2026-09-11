@@ -124,4 +124,5 @@ jobs:
         with:
           tag_name: "brave-${{ steps.patch_info.outputs.brave_version }}-${{ steps.patch_info.outputs.patch_tag }}"
           name: "Brave ${{ steps.patch_info.outputs.brave_version }} (patch ${{ steps.patch_info.outputs.patch_tag }})"
+          body: "Automated build. Brave ${{ steps.patch_info.outputs.brave_version }}, patched with kveld9's Morphe patches (${{ steps.patch_info.outputs.patch_tag }})."
           files: brave-patched.apk
