@@ -54,6 +54,7 @@ jobs:
           fi
 
           echo "patch_tag=$PATCH_VERSION-$PATCH_TAG" >> "$GITHUB_OUTPUT"
+          echo "kveld_tag=$PATCH_TAG" >> "$GITHUB_OUTPUT"
           echo "patch_url=$PATCH_URL" >> "$GITHUB_OUTPUT"
           echo "brave_version=$BRAVE_VERSION" >> "$GITHUB_OUTPUT"
 
@@ -123,6 +124,6 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           tag_name: "brave-${{ steps.patch_info.outputs.brave_version }}-${{ steps.patch_info.outputs.patch_tag }}"
-          name: "Brave ${{ steps.patch_info.outputs.brave_version }} (patch ${{ steps.patch_info.outputs.patch_tag }})"
-          body: "Native telemetry stripped at the bytecode/libchrome.so level using kveld9's Morphe patches. Signed with a personal key, unaffiliated with kveld9 or Brave Software."
+          name: "Brave ${{ steps.patch_info.outputs.brave_version }}"
+          body: "Patched with kveld9's Morphe patches ${{ steps.patch_info.outputs.patch_tag }} — https://github.com/kveld9/kveld-morphe-patches/releases/tag/${{ steps.patch_info.outputs.kveld_tag }}\n\nNative telemetry stripped at the bytecode/libchrome.so level. Signed with a personal key, unaffiliated with kveld9 or Brave Software."
           files: brave-patched.apk
