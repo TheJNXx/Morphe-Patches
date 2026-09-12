@@ -6,9 +6,9 @@ Patched Brave Browser
 
 This is for personal use with a custom signature, all thanks to GitHub Actions
 
-Verification
+**Verification**
 
-com.brave.browser
+`com.brave.browser`
 
 ```
 3A:5B:8F:AC:E3:2F:A9:45:43:9C:14:6A:63:87:A7:0D:0C:D4:6F:AD:CC:55:F8:A7:F7:83:11:86:4C:D4:6E:DC
