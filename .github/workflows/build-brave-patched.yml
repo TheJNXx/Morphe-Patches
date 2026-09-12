@@ -35,8 +35,6 @@ jobs:
           curl -sL --fail -o patches-list.json \
             "https://raw.githubusercontent.com/kveld9/kveld-morphe-patches/main/patches-list.json"
 
-          PATCH_VERSION=$(jq -r '.version' patches-list.json)
-
           BRAVE_VERSION=$(jq -r '
             [.patches[].compatiblePackages[]?
               | select(.packageName == "com.brave.browser")
@@ -53,7 +51,6 @@ jobs:
             exit 1
           fi
 
-          echo "patch_tag=$PATCH_VERSION-$PATCH_TAG" >> "$GITHUB_OUTPUT"
           echo "kveld_tag=$PATCH_TAG" >> "$GITHUB_OUTPUT"
           echo "patch_url=$PATCH_URL" >> "$GITHUB_OUTPUT"
           echo "brave_version=$BRAVE_VERSION" >> "$GITHUB_OUTPUT"
